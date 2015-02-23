@@ -5,14 +5,14 @@ var qs = require('qs');
 
 
 // Throw an error when a URL is needed, and none is supplied.
-var urlError = function () {
+var urlError = function() {
     throw new Error('A "url" property or function must be specified');
 };
 
 
-module.exports = function (name) {
+module.exports = function(name) {
 
-    return function(method,model,options){
+    return function(method, model, options) {
         var type = methodMap[method];
         var headers = {};
         var store = localStorage.getItem(name);
@@ -28,7 +28,9 @@ module.exports = function (name) {
         });
 
         // Default request options.
-        var params = {type: type};
+        var params = {
+            type: type
+        };
 
         // Ensure that we have a URL.
         if (!options.url) {
@@ -50,7 +52,9 @@ module.exports = function (name) {
         // For older servers, emulate JSON by encoding the request into an HTML-form.
         if (options.emulateJSON) {
             headers['Content-Type'] = 'application/x-www-form-urlencoded';
-            params.body = params.json ? {model: params.json} : {};
+            params.body = params.json ? {
+                model: params.json
+            } : {};
             delete params.json;
         }
 
@@ -85,7 +89,7 @@ module.exports = function (name) {
         // Set raw xhr options.
         if (ajaxConfig.xhrFields) {
             var beforeSend = ajaxConfig.beforeSend;
-            params.beforeSend = function (req) {
+            params.beforeSend = function(req) {
                 for (var key in ajaxConfig.xhrFields) {
                     req[key] = ajaxConfig.xhrFields[key];
                 }
@@ -101,9 +105,19 @@ module.exports = function (name) {
 
         var ajaxSettings = _.extend(params, options);
 
+        //when collection        
+        // if (localStorage.getItem(name)) {
+        //     return options.success(JSON.parse(localStorage.getItem(name)), 'success');
+        // }
+
+        // //when model
+        // if (model.id && localStorage.getItem(name + '-' + model.id)) {            
+        //     return options.success(JSON.parse(localStorage.getItem(name + '-' + model.id)), 'success');
+        // }
+
         // Make the request. The callback executes functions that are compatible
         // With jQuery.ajax's syntax.
-        var request = options.xhr = options.xhrImplementation(ajaxSettings, function (err, resp, body) {
+        var request = options.xhr = options.xhrImplementation(ajaxSettings, function(err, resp, body) {
             if (err && options.error) return options.error(resp, 'error', err.message);
 
             // Parse body as JSON if a string.
@@ -115,25 +129,24 @@ module.exports = function (name) {
                 }
             }
 
-            switch(method) {
-                case 'create':
-                    var responseObject = JSON.parse(resp.rawRequest.response);
-                    if (!responseObject.id) responseObject.id = guid();                    
-                    localStorage.setItem(name + '-' + responseObject.id, resp.rawRequest.response);
+            switch (method) {
+                case 'create':                    
+                    if (!body.id) body.id = guid();
+                    localStorage.setItem(name + '-' + body.id, resp.rawRequest.response);
                     break;
                 case 'update':
-                    var responseObject = JSON.parse(resp.rawRequest.response);
-                    if (!responseObject.id) responseObject.id = model.id;
-                    localStorage.setItem(name + '-' + model.id, resp.rawRequest.response);
-                    break;            
+                    var body = JSON.parse(resp.rawRequest.response);
+                    if (!body.id) body.id = model.id;
+                    localStorage.setItem(name + '-' + body.id, resp.rawRequest.response);
+                    break;
                 case 'delete':
                     records.splice(records.indexOf(model.id.toString()), 1);
                     localStorage.removeItem(name + '-' + model.id);
                     break;
-                case 'read':                
-                    if ((!localStorage.getItem(name)) || (localStorage.getItem(name) !== resp.body)){                        
+                case 'read':
+                    if ((!localStorage.getItem(name)) || (localStorage.getItem(name) !== resp.body)) {
                         localStorage.setItem(name, resp.body);
-                    }                    
+                    }
                     break;
             }
 
@@ -143,12 +156,12 @@ module.exports = function (name) {
         model.trigger('request', model, request, options, ajaxSettings);
         request.ajaxSettings = ajaxSettings;
         return request;
-    }    
+    }
 };
 
 function guid() {
     function S4() {
-        return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
     }
     return S4() + S4();
 }
@@ -157,7 +170,7 @@ function guid() {
 var methodMap = {
     'create': 'POST',
     'update': 'PUT',
-    'patch':  'PATCH',
+    'patch': 'PATCH',
     'delete': 'DELETE',
-    'read':   'GET'
+    'read': 'GET'
 };
