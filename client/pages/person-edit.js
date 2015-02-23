@@ -12,7 +12,7 @@ module.exports = PageView.extend({
         app.people.getOrFetch(spec.id, {all: true}, function (err, model) {
             if (err) alert('couldnt find a model with id: ' + spec.id);
             self.model = model;
-        });
+        });        
     },
     subviews: {
         form: {

@@ -10,7 +10,6 @@ var Me = require('./models/me');
 var People = require('./models/persons');
 var domReady = require('domready');
 
-
 module.exports = {
     // this is the the whole app initter
     blastoff: function () {
@@ -18,7 +17,7 @@ module.exports = {
 
         // create our global 'me' object and an empty collection for our people models.
         window.me = new Me();
-        this.people = new People();
+        this.people = new People();        
 
         // init our URL handlers and the history tracker
         this.router = new Router();

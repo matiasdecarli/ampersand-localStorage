@@ -1,9 +1,9 @@
-var AmpersandModel = require('ampersand-model'),
-    syncFactory    = require('../vendor/ampersand-localstorage');
-
+var AmpersandModel = require('ampersand-model');
+var syncFactory = require('../vendor/ampersand-sync-localstorage');
+var localStorageSync = require('../vendor/localStorageSync');
 
 module.exports = AmpersandModel.extend({
-    sync: syncFactory('person'),
+    sync: localStorageSync('person'),
     props: {
         id: 'any',
         firstName: ['string', true, ''],
@@ -16,25 +16,25 @@ module.exports = AmpersandModel.extend({
     derived: {
         fullName: {
             deps: ['firstName', 'lastName'],
-            fn: function () {
+            fn: function() {
                 return this.firstName + ' ' + this.lastName;
             }
         },
         avatar: {
             deps: ['firstName', 'lastName'],
-            fn: function () {
+            fn: function() {
                 return 'http://robohash.org/' + encodeURIComponent(this.fullName) + '?size=80x80';
             }
         },
         editUrl: {
             deps: ['id'],
-            fn: function () {
+            fn: function() {
                 return '/person/' + this.id + '/edit';
             }
         },
         viewUrl: {
             deps: ['id'],
-            fn: function () {
+            fn: function() {
                 return '/person/' + this.id;
             }
         }
