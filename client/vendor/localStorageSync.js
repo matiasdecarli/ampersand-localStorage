@@ -11,13 +11,14 @@ var urlError = function() {
 
 
 module.exports = function(name) {
-
     return function(method, model, options) {
+
+        model.set(JSON.parse(localStorage.getItem(name)));
+
         var type = methodMap[method];
         var headers = {};
         var store = localStorage.getItem(name);
         var records = (store && store.split(',')) || [];
-
 
         // Default options, unless specified.
         _.defaults(options || (options = {}), {
@@ -104,16 +105,6 @@ module.exports = function(name) {
         params.method = params.type;
 
         var ajaxSettings = _.extend(params, options);
-
-        //when collection        
-        // if (localStorage.getItem(name)) {
-        //     return options.success(JSON.parse(localStorage.getItem(name)), 'success');
-        // }
-
-        // //when model
-        // if (model.id && localStorage.getItem(name + '-' + model.id)) {            
-        //     return options.success(JSON.parse(localStorage.getItem(name + '-' + model.id)), 'success');
-        // }
 
         // Make the request. The callback executes functions that are compatible
         // With jQuery.ajax's syntax.

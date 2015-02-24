@@ -1,5 +1,4 @@
 var AmpersandModel = require('ampersand-model');
-var syncFactory = require('../vendor/ampersand-sync-localstorage');
 var localStorageSync = require('../vendor/localStorageSync');
 
 module.exports = AmpersandModel.extend({
